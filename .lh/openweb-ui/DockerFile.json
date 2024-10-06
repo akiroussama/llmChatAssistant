@@ -1,0 +1,22 @@
+{
+    "sourceFile": "openweb-ui/DockerFile",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1728194424408,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728194787827,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n # Stage 1: Build the OpenWeb UI\r\n-FROM node:20 as builder\r\n+FROM node:lts as builder\r\n \r\n WORKDIR /app\r\n \r\n # Copy package files and install dependencies\r\n"
+                }
+            ],
+            "date": 1728194424408,
+            "name": "Commit-0",
+            "content": "# Stage 1: Build the OpenWeb UI\r\nFROM node:20 as builder\r\n\r\nWORKDIR /app\r\n\r\n# Copy package files and install dependencies\r\nCOPY package*.json ./\r\nRUN npm install\r\n\r\n# Copy the rest of the source code\r\nCOPY . .\r\n\r\n# Set environment variable to enable experimental WebAssembly features\r\nENV NODE_OPTIONS=--experimental-wasm-bigint\r\n\r\n# Build the project\r\nRUN npm run build\r\n\r\n# Stage 2: Serve with Nginx\r\nFROM nginx:alpine\r\n\r\n# Copy built files from the builder stage\r\nCOPY --from=builder /app/out /usr/share/nginx/html\r\n\r\n# Copy custom Nginx configuration\r\nCOPY nginx.conf /etc/nginx/conf.d/default.conf\r\n\r\n# Expose port 80\r\nEXPOSE 80\r\n\r\n# Start Nginx\r\nCMD [\"nginx\", \"-g\", \"daemon off;\"]"
+        }
+    ]
+}
