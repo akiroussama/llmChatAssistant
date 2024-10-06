@@ -1,0 +1,11 @@
+database:
+  url: postgresql://llm_user:securepassword@postgres:5432/llm_chat_db
+
+model:
+  type: ollama
+  host: ollama
+  port: 11434
+
+server:
+  host: 0.0.0.0
+  port: 8000

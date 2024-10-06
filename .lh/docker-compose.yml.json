@@ -1,0 +1,34 @@
+{
+    "sourceFile": "docker-compose.yml",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1728192172370,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728193021266,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,8 +49,10 @@\n     environment:\r\n       - NEXT_PUBLIC_API_URL=http://haystack:8000/api\r\n     depends_on:\r\n       - haystack\r\n+    environment:\r\n+      LOG_LEVEL: debug\r\n     networks:\r\n       - llm-network\r\n \r\n volumes:\r\n"
+                },
+                {
+                    "date": 1728193026420,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -37,8 +37,10 @@\n       - \"8000:8000\"\r\n     depends_on:\r\n       - postgres\r\n       - ollama\r\n+    environment:\r\n+      LOG_LEVEL: debug\r\n     networks:\r\n       - llm-network\r\n \r\n   openweb-ui:\r\n"
+                },
+                {
+                    "date": 1728193042899,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,9 +38,8 @@\n     depends_on:\r\n       - postgres\r\n       - ollama\r\n     environment:\r\n-      LOG_LEVEL: debug\r\n     networks:\r\n       - llm-network\r\n \r\n   openweb-ui:\r\n"
+                },
+                {
+                    "date": 1728193050681,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,14 +32,14 @@\n     environment:\r\n       DATABASE_URL: postgresql://llm_user:securepassword@postgres:5432/llm_chat_db\r\n       MODEL_HOST: ollama\r\n       MODEL_PORT: 11434\r\n+      LOG_LEVEL: debug\r\n     ports:\r\n       - \"8000:8000\"\r\n     depends_on:\r\n       - postgres\r\n       - ollama\r\n-    environment:\r\n     networks:\r\n       - llm-network\r\n \r\n   openweb-ui:\r\n@@ -51,9 +51,8 @@\n       - NEXT_PUBLIC_API_URL=http://haystack:8000/api\r\n     depends_on:\r\n       - haystack\r\n     environment:\r\n-      LOG_LEVEL: debug\r\n     networks:\r\n       - llm-network\r\n \r\n volumes:\r\n"
+                }
+            ],
+            "date": 1728192172370,
+            "name": "Commit-0",
+            "content": "version: '3.8'\r\n\r\nservices:\r\n  postgres:\r\n    image: postgres:14\r\n    container_name: postgres\r\n    environment:\r\n      POSTGRES_USER: llm_user\r\n      POSTGRES_PASSWORD: securepassword\r\n      POSTGRES_DB: llm_chat_db\r\n    ports:\r\n      - \"5432:5432\"\r\n    volumes:\r\n      - postgres-data:/var/lib/postgresql/data\r\n      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql\r\n    networks:\r\n      - llm-network\r\n\r\n  ollama:\r\n    build: ./ollama\r\n    container_name: ollama\r\n    ports:\r\n      - \"11434:11434\"\r\n    volumes:\r\n      - ollama-data:/ollama\r\n    networks:\r\n      - llm-network\r\n\r\n  haystack:\r\n    build: ./haystack\r\n    container_name: haystack\r\n    environment:\r\n      DATABASE_URL: postgresql://llm_user:securepassword@postgres:5432/llm_chat_db\r\n      MODEL_HOST: ollama\r\n      MODEL_PORT: 11434\r\n    ports:\r\n      - \"8000:8000\"\r\n    depends_on:\r\n      - postgres\r\n      - ollama\r\n    networks:\r\n      - llm-network\r\n\r\n  openweb-ui:\r\n    build: ./openweb-ui\r\n    container_name: openweb-ui\r\n    ports:\r\n      - \"3000:80\"\r\n    environment:\r\n      - NEXT_PUBLIC_API_URL=http://haystack:8000/api\r\n    depends_on:\r\n      - haystack\r\n    networks:\r\n      - llm-network\r\n\r\nvolumes:\r\n  postgres-data:\r\n  ollama-data:\r\n\r\nnetworks:\r\n  llm-network:\r\n    driver: bridge"
+        }
+    ]
+}

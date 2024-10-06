@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: llm_user
+      POSTGRES_PASSWORD: securepassword
+      POSTGRES_DB: llm_chat_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - llm-network
+
+  ollama:
+    build: ./ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/ollama
+    networks:
+      - llm-network
+
+  haystack:
+    build: ./haystack
+    container_name: haystack
+    environment:
+      DATABASE_URL: postgresql://llm_user:securepassword@postgres:5432/llm_chat_db
+      MODEL_HOST: ollama
+      MODEL_PORT: 11434
+      LOG_LEVEL: debug
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - ollama
+    networks:
+      - llm-network
+
+  openweb-ui:
+    build: ./openweb-ui
+    container_name: openweb-ui
+    ports:
+      - "3000:80"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://haystack:8000/api
+      - LOG_LEVEL=debug
+    depends_on:
+      - haystack
+    networks:
+      - llm-network
+
+volumes:
+  postgres-data:
+  ollama-data:
+
+networks:
+  llm-network:
+    driver: bridge
